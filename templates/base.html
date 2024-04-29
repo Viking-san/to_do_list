@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Включите здесь ваши стили CSS -->
+</head>
+<body>
+    <header>
+        <h1>Мой веб-сайт</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/todo">ToDo</a></li>
+                <!-- Добавьте здесь другие ссылки на навигацию -->
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Здесь будет содержимое каждого конкретного шаблона -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Мой веб-сайт. Все права защищены.</p>
+    </footer>
+
+    <!-- Включите здесь ваши скрипты JavaScript -->
+</body>
+</html>

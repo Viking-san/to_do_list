@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+</head>
+<body>
+    <h1>ToDo List</h1>
+    <ul>
+        {% if tasks %}
+            {% for task in tasks %}
+                <li><a href="{{ url_for('task', task_id=task.id) }}">{{ task.title }}</a> - {{ task.date_created.strftime('%Y-%m-%d') }} - {% if task.completed %}Completed{% else %}Not Completed{% endif %}</li>
+            {% endfor %}
+        {% else %}
+            <li>No tasks found.</li>
+        {% endif %}
+    </ul>
+    <h2>Create New Task</h2>
+    <form method="POST" action="{{ url_for('create_task') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.title.label(class="form-control-label") }}
+            {{ form.title(class="form-control form-control-lg") }}
+        </div>
+        <div class="form-group">
+            {{ form.description.label(class="form-control-label") }}
+            {{ form.description(class="form-control form-control-lg") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</body>
+</html>

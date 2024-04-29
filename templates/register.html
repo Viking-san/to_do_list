@@ -8,9 +8,9 @@
 <body>
     <h1>Регистрация нового пользователя</h1>
     <form action="/register" method="post">
-        <ul>
-            <li><a href="/">Home</a></li>
-        </ul>
+
+        <li><a href="/">Home</a></li>
+
         <label for="username">Имя пользователя:</label>
         <input type="text" id="username" name="username" required><br><br>
         <label for="email">Адрес электронной почты:</label>
@@ -19,6 +19,16 @@
         <input type="password" id="password" name="password" required><br><br>
         <label for="confirm_password">Подтвердите пароль:</label>
         <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
         <input type="submit" value="Зарегистрироваться">
     </form>
 </body>
