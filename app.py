@@ -183,22 +183,6 @@ def todo():
     return render_template('todo.html', form=form, tasks=tasks)
 
 # Определение маршрута для отображения конкретной задачи
-# @app.route('/task/<int:task_id>', methods=['GET', 'POST'])
-# @login_required
-# def task(task_id):
-#     task = Task.query.get_or_404(task_id)
-#     comment_form = CommentForm()
-#
-#     if comment_form.validate_on_submit():
-#         comment_text = comment_form.content.data
-#         new_comment = Comment(content=comment_text, user_id=current_user.id, task_id=task_id)  # Здесь передаем user_id
-#         db.session.add(new_comment)
-#         db.session.commit()
-#         flash('Your comment has been added!', 'success')
-#         return redirect(url_for('task', task_id=task_id))
-#
-#     return render_template('task.html', task=task, comment_form=comment_form)
-
 @app.route('/task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def task(task_id):
