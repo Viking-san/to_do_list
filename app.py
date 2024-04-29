@@ -1,5 +1,5 @@
 # Импорт необходимых модулей и классов
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -171,6 +171,29 @@ def todo():
 def task(task_id):
     task = Task.query.get_or_404(task_id)
     return render_template('task.html', task=task)
+
+
+# Определение маршрута для обновления статуса задачи на "выполнено"
+@app.route('/complete_task/<int:task_id>', methods=['POST', 'PUT'])
+@login_required
+def complete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    task.completed = True
+    db.session.commit()
+    flash('Task marked as completed', 'success')
+    return redirect(url_for('todo'))
+
+
+@app.route('/task/<int:task_id>/delete', methods=['POST'])
+@login_required
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.author != current_user:
+        abort(403)  # Forbidden
+    db.session.delete(task)
+    db.session.commit()
+    flash('Task deleted successfully!', 'success')
+    return redirect(url_for('todo'))
 
 # Запуск приложения
 if __name__ == '__main__':
