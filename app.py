@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 
 # Создаем экземпляр приложения Flask
@@ -58,6 +58,23 @@ class TaskForm(FlaskForm):
     description = StringField('Description')
     submit = SubmitField('Add Task')
 
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Comment('{self.content}', '{self.date_posted}')"
+
+
+class CommentForm(FlaskForm):
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Add Comment')
+
+
 # Создание всех таблиц в базе данных, если они еще не существуют
 with app.app_context():
     db.create_all()
@@ -65,7 +82,7 @@ with app.app_context():
 # Функция для загрузки пользователя Flask-Login на основе его идентификатора
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.query(User).get(int(user_id))
 
 # Определение маршрута для главной страницы
 @app.route('/')
@@ -166,11 +183,38 @@ def todo():
     return render_template('todo.html', form=form, tasks=tasks)
 
 # Определение маршрута для отображения конкретной задачи
-@app.route('/task/<int:task_id>')
+# @app.route('/task/<int:task_id>', methods=['GET', 'POST'])
+# @login_required
+# def task(task_id):
+#     task = Task.query.get_or_404(task_id)
+#     comment_form = CommentForm()
+#
+#     if comment_form.validate_on_submit():
+#         comment_text = comment_form.content.data
+#         new_comment = Comment(content=comment_text, user_id=current_user.id, task_id=task_id)  # Здесь передаем user_id
+#         db.session.add(new_comment)
+#         db.session.commit()
+#         flash('Your comment has been added!', 'success')
+#         return redirect(url_for('task', task_id=task_id))
+#
+#     return render_template('task.html', task=task, comment_form=comment_form)
+
+@app.route('/task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def task(task_id):
     task = Task.query.get_or_404(task_id)
-    return render_template('task.html', task=task)
+    comments = Comment.query.filter_by(task_id=task_id).all()  # Получаем все комментарии для данной задачи
+    comment_form = CommentForm()
+
+    if comment_form.validate_on_submit():
+        comment_text = comment_form.content.data
+        new_comment = Comment(content=comment_text, user_id=current_user.id, task_id=task_id)
+        db.session.add(new_comment)
+        db.session.commit()
+        flash('Your comment has been added!', 'success')
+        return redirect(url_for('task', task_id=task_id))
+
+    return render_template('task.html', task=task, comments=comments, comment_form=comment_form)
 
 
 # Определение маршрута для обновления статуса задачи на "выполнено"
@@ -194,6 +238,24 @@ def delete_task(task_id):
     db.session.commit()
     flash('Task deleted successfully!', 'success')
     return redirect(url_for('todo'))
+
+
+@app.route('/add_comment/<int:task_id>', methods=['POST'])
+@login_required
+def add_comment(task_id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        content = form.comment_text.data
+        # Создаем новый комментарий с указанием текущего пользователя
+        new_comment = Comment(content=content, user_id=current_user.id, task_id=task_id)
+        db.session.add(new_comment)
+        db.session.commit()
+        flash('Comment added successfully!', 'success')
+        return redirect(url_for('task', task_id=task_id))
+    flash('Failed to add comment. Please check your input.', 'error')
+    return redirect(url_for('task', task_id=task_id))
+
+
 
 # Запуск приложения
 if __name__ == '__main__':

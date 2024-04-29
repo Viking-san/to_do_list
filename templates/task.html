@@ -13,7 +13,20 @@
     <hr>
     <h2>Notes</h2>
     <ul>
-        <!-- Здесь можно добавить отображение заметок для задачи -->
+        {% for comment in comments %}
+            <li>{{ comment.content }}</li>
+        {% endfor %}
     </ul>
+
+    <!-- Форма для добавления комментария -->
+    <h2>Add Comment</h2>
+    <form method="POST">
+        {{ comment_form.hidden_tag() }}
+        <div class="form-group">
+            {{ comment_form.content.label(class="form-control-label") }}
+            {{ comment_form.content(class="form-control") }}
+        </div>
+        {{ comment_form.submit(class="btn btn-primary") }}
+    </form>
 </body>
 </html>
