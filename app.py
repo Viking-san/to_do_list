@@ -251,4 +251,4 @@ def add_comment(task_id):
 
 # Запуск приложения
 if __name__ == '__main__':
-    app.run(debug=True, port=8080, host='192.168.0.107')
+    app.run(debug=True)
