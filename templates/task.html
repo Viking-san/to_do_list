@@ -8,29 +8,33 @@
     <hr>
 
     <!-- Описание задачи -->
-    <div class="description">
+    <div class="task-description">
         <h2>Description</h2>
-        <div contenteditable="true" class="content">{{ task.description }}</div>
+        {{ task.description }}
     </div>
 
     <hr>
 
-    <!-- Комментарии -->
-    <h2>Comments</h2>
-    <ul>
-        {% for comment in comments %}
-            <li>{{ comment.content }}</li>
-        {% endfor %}
-    </ul>
+
+
 
 <!-- Форма для добавления комментария -->
-    <h2>Add Comment</h2>
-    <form method="POST">
-        {{ comment_form.hidden_tag() }}
-        <div class="form-group">
-            {{ comment_form.content.label(class="form-control-label") }}
-            {{ comment_form.content(class="form-control") }}
-        </div>
-        {{ comment_form.submit(class="btn btn-primary") }}
-    </form>
+<h2>Add Comment</h2>
+<form method="POST">
+    {{ comment_form.hidden_tag() }}
+    <div class="form-group">
+        {{ comment_form.content.label(class="form-control-label") }}
+        <textarea name="content" class="form-control" rows="3"></textarea>
+    </div>
+    {{ comment_form.submit(class="btn btn-primary") }}
+</form>
+
+<!-- Комментарии -->
+<h2>Comments</h2>
+<ul>
+    {% for comment in comments[::-1] %}
+        <li><strong>{{ comment.date_posted.strftime('%Y-%m-%d %H:%M:%S') }}</strong>: {{ comment.content }}</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}

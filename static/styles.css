@@ -61,7 +61,7 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea {
-    width: 200px;
+    width: 300px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -133,6 +133,7 @@ textarea {
     padding: 10px;
     border-radius: 5px;
     margin-top: 15px;
+    background-color: #ccc;
     color: #000; /* Черный текст */
 }
 
