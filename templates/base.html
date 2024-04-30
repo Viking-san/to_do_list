@@ -4,15 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <!-- Включите здесь ваши стили CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Ваши общие стили CSS -->
 </head>
-<body>
+<body style="margin-left: 25px;border-left-style: solid;border-left-width: 0px;">
     <header>
-        <h1>Мой веб-сайт</h1>
+        <h1>To do app</h1>
         <nav>
             <ul>
-                <li><a href="/">Главная</a></li>
-                <li><a href="/todo">ToDo</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/secret">Secret</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="/todo">To Do</a></li>
+                <li><a href="/logout">Logout</a></li>
+                {% endif %}
                 <!-- Добавьте здесь другие ссылки на навигацию -->
             </ul>
         </nav>
@@ -28,6 +35,6 @@
         <p>&copy; 2024 Мой веб-сайт. Все права защищены.</p>
     </footer>
 
-    <!-- Включите здесь ваши скрипты JavaScript -->
+    <!-- Ваши скрипты JavaScript -->
 </body>
 </html>

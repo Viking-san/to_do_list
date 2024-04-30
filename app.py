@@ -224,6 +224,7 @@ def delete_task(task_id):
     return redirect(url_for('todo'))
 
 
+
 @app.route('/add_comment/<int:task_id>', methods=['POST'])
 @login_required
 def add_comment(task_id):
@@ -243,4 +244,4 @@ def add_comment(task_id):
 
 # Запуск приложения
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8080, host='192.168.0.107')

@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ task.title }}</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+
+{% block content %}
     <h1>{{ task.title }}</h1>
     <p><strong>Description:</strong> {{ task.description }}</p>
     <p><strong>Date Created:</strong> {{ task.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
@@ -28,5 +24,4 @@
         </div>
         {{ comment_form.submit(class="btn btn-primary") }}
     </form>
-</body>
-</html>
+{% endblock %}
