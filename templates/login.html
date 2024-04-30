@@ -4,19 +4,21 @@
 {% block content %}
 <h2>Login</h2>
 <form method="POST">
-    <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username" required><br>
-    <label for="password">Password:</label><br>
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Пароль:</label>
     <input type="password" id="password" name="password" required><br><br>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'success_login' or category == 'error_login' %}
+            <div class="alert alert-{{ category }}">
+              {{ message }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <button type="submit">Login</button>
 </form>
 {% endblock %}

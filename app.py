@@ -45,7 +45,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
@@ -62,7 +62,7 @@ class TaskForm(FlaskForm):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
 
@@ -75,20 +75,22 @@ class CommentForm(FlaskForm):
     submit = SubmitField('Add Comment')
 
 
-
 # Создание всех таблиц в базе данных, если они еще не существуют
 with app.app_context():
     db.create_all()
+
 
 # Функция для загрузки пользователя Flask-Login на основе его идентификатора
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.query(User).get(int(user_id))
 
+
 # Определение маршрута для главной страницы
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 # Определение маршрута для страницы регистрации пользователей
 @app.route('/register', methods=['GET', 'POST'])
@@ -103,27 +105,28 @@ def register():
         # Проверка наличия пользователя с таким же именем или email
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            flash('Пользователь с таким именем уже существует', 'error')
+            flash('Пользователь с таким именем уже существует', 'error_register')
             return redirect('/register')
 
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
-            flash('Пользователь с такой почтой уже существует', 'error')
+            flash('Пользователь с такой почтой уже существует', 'error_register')
             return redirect('/register')
 
         # Проверка соответствия пароля и его подтверждения
         if password != confirm_password:
-            flash('Пароль и его подтверждение не совпадают', 'error')
+            flash('Пароль и его подтверждение не совпадают', 'error_register')
             return redirect('/register')
 
         # Создание нового пользователя и добавление его в базу данных
         new_user = User(username=username, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
-
+        flash('Регистрация прошла успешно!', 'success_register')
         return redirect('/login')
 
     return render_template('register.html')
+
 
 # Определение маршрута для секретной страницы
 @app.route('/secret')
@@ -133,6 +136,7 @@ def secret():
     message += "This is a secret page accessible only to authenticated users. "
     message += f"<a href='{url_for('index')}'>Go to Home</a>"
     return message
+
 
 # Определение маршрута для страницы входа пользователя
 @app.route('/login', methods=['GET', 'POST'])
@@ -144,12 +148,13 @@ def login():
 
         if user and user.password == password:
             login_user(user)
-            flash('Вы успешно авторизовались', 'success')
+            flash('Вы успешно авторизовались', 'success_login')
             return redirect('/')
         else:
-            flash('Неверные имя или пароль', 'error')
+            flash('Неверные имя или пароль', 'error_login')
 
     return render_template('login.html')
+
 
 # Определение маршрута для выхода пользователя из системы
 @app.route('/logout')
@@ -158,6 +163,7 @@ def logout():
     logout_user()
     flash('Вы успешно вышли', 'success')
     return redirect('/')
+
 
 # Определение маршрута для создания задачи
 @app.route('/create_task', methods=['POST'])
@@ -175,6 +181,7 @@ def create_task():
         flash('Failed to create task. Please check your input.', 'error')
     return redirect(url_for('todo'))
 
+
 # Определение маршрута для отображения всех задач
 @app.route('/todo')
 @login_required
@@ -182,6 +189,7 @@ def todo():
     form = TaskForm()
     tasks = current_user.tasks
     return render_template('todo.html', form=form, tasks=tasks)
+
 
 # Определение маршрута для отображения конкретной задачи
 @app.route('/task/<int:task_id>', methods=['GET', 'POST'])
@@ -225,7 +233,6 @@ def delete_task(task_id):
     return redirect(url_for('todo'))
 
 
-
 @app.route('/add_comment/<int:task_id>', methods=['POST'])
 @login_required
 def add_comment(task_id):
@@ -240,7 +247,6 @@ def add_comment(task_id):
         return redirect(url_for('task', task_id=task_id))
     flash('Failed to add comment. Please check your input.', 'error')
     return redirect(url_for('task', task_id=task_id))
-
 
 
 # Запуск приложения

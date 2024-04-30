@@ -4,6 +4,8 @@
 {% block content %}
 <!-- Содержимое главной страницы -->
 
-<img src="{{ url_for('static', filename='images/wizard-meme.jpg') }}" class="img-left">
+<div class="image-container">
+    <img src="{{ url_for('static', filename='images/wizard-meme.jpg') }}" alt="Wizard Meme">
+</div>
 
 {% endblock %}

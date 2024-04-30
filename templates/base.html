@@ -6,8 +6,15 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <!-- Ваши общие стили CSS -->
+    <style>
+        body {
+            margin-left: 25px;
+            border-left-style: solid;
+            border-left-width: 0px;
+        }
+    </style>
 </head>
-<body style="margin-left: 25px;border-left-style: solid;border-left-width: 0px;">
+<body>
     <header>
         <h1>To do app</h1>
         <nav>
@@ -32,7 +39,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Мой веб-сайт. Все права защищены.</p>
+        <p>&copy; 2024 Pans-молодец. Все права котов защищены.</p>
     </footer>
 
     <!-- Ваши скрипты JavaScript -->
