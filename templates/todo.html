@@ -2,23 +2,29 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<ul>
+<ul class="task-list">
     {% if tasks %}
         {% for task in tasks %}
-            <li>
-                <a href="{{ url_for('task', task_id=task.id) }}"><strong>{{ task.title }}</strong></a> - {{ task.date_created.strftime('%Y-%m-%d') }} -
-                {% if task.completed %}
-                    Completed
-                {% else %}
-                    <form id="complete-form-{{ task.id }}" method="POST" action="{{ url_for('complete_task', task_id=task.id) }}">
-                        <input type="hidden" name="_method" value="PUT">
-                        <button type="button" onclick="completeTask({{ task.id }})">Complete</button>
-                    </form>
-                {% endif %}
-                <form id="delete-form-{{ task.id }}" method="POST" action="{{ url_for('delete_task', task_id=task.id) }}">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="button" onclick="deleteTask({{ task.id }})">Delete</button>
-                </form>
+            <li class="task">
+                <div class="task-header">
+                    <div class="task-title">
+                        <a href="{{ url_for('task', task_id=task.id) }}">{{ task.date_created.strftime('%Y-%m-%d - %H:%M') }} - <strong>{{ task.title }}</strong></a>
+                    </div>
+                    <div class="task-actions">
+                        {% if task.completed %}
+                            Completed
+                        {% else %}
+                            <form id="complete-form-{{ task.id }}" method="POST" action="{{ url_for('complete_task', task_id=task.id) }}">
+                                <input type="hidden" name="_method" value="PUT">
+                                <button type="button" onclick="completeTask({{ task.id }})">Complete</button>
+                            </form>
+                        {% endif %}
+                        <form id="delete-form-{{ task.id }}" method="POST" action="{{ url_for('delete_task', task_id=task.id) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="button" onclick="deleteTask({{ task.id }})">Delete</button>
+                        </form>
+                    </div>
+                </div>
             </li>
         {% endfor %}
     {% else %}
@@ -26,29 +32,34 @@
     {% endif %}
 </ul>
 
-<form method="POST" action="{{ url_for('create_task') }}">
+<form id="task-form" method="POST" action="{{ url_for('create_task') }}">
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.title.label(class="form-control-label") }}
         {{ form.title(class="form-control form-control-lg") }}
     </div>
     <div class="form-group">
-        {{ form.description.label(class="form-control-label") }}
-        {{ form.description(class="form-control form-control-lg") }}
+        <label for="description" class="form-control-label">Description</label>
+        <div contenteditable="true" id="description" name="description" class="content"></div>
     </div>
     {{ form.submit(class="btn btn-primary") }}
 </form>
 
-<script>
-    function completeTask(taskId) {
-        if (confirm("Are you sure you want to mark this task as completed?")) {
-            document.getElementById('complete-form-' + taskId).submit();
+    <script>
+        function completeTask(taskId) {
+            if (confirm("Are you sure you want to mark this task as completed?")) {
+                document.getElementById('complete-form-' + taskId).submit();
+            }
         }
-    }
-    function deleteTask(taskId) {
-        if (confirm("Are you sure you want to delete this task?")) {
-            document.getElementById('delete-form-' + taskId).submit();
+        function deleteTask(taskId) {
+            if (confirm("Are you sure you want to delete this task?")) {
+                document.getElementById('delete-form-' + taskId).submit();
+            }
         }
-    }
-</script>
+            // При отправке формы присвоим содержимое div элемента полю description формы
+        document.getElementById("task-form").addEventListener("submit", function(event) {
+        var descriptionContent = document.getElementById("description").innerText;
+        document.getElementById("description").innerHTML = '<textarea style="display: none" name="description">' + descriptionContent + '</textarea>';
+    });
+    </script>
 {% endblock %}

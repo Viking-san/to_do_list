@@ -71,8 +71,9 @@ class Comment(db.Model):
 
 
 class CommentForm(FlaskForm):
-    content = TextAreaField('Content', validators=[DataRequired()])
+    content = StringField('Content', validators=[DataRequired()], render_kw={'placeholder': ''})
     submit = SubmitField('Add Comment')
+
 
 
 # Создание всех таблиц в базе данных, если они еще не существуют
